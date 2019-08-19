@@ -16,6 +16,7 @@
 
 class Salyut
 {
+//Global variables for database connections
 public static  $DB_HOST;
 public static $DB_USER;
 public static $DB_PASS;
@@ -28,6 +29,8 @@ function  __construct($host,$DB_USER,$DB_PASS,$DB_NAME)
   Salyut::$DB_PASS = $DB_PASS;
   Salyut::$DB_NAME = $DB_NAME;
 }
+
+//normal server connection (YOU CAN CHANGE TO SUIT YOUR CASE)
 public static function Connect()
 {
   //connect to database
@@ -40,6 +43,7 @@ if ($conn->connect_error)
 return $conn;
 }
 
+//list all tables present in this database
 public static function GetTables()
 {
   //get connection object
@@ -60,6 +64,7 @@ if ($result->num_rows > 0)
  $conn->close();
 return $table;
 }
+//get the database structure
 public static function GetDatabaseSchema($DATABASE)
 {
   global $DBSCHEMA;
@@ -75,6 +80,8 @@ public static function GetDatabaseSchema($DATABASE)
  $conn->close();
  return $DBSCHEMA;
 }
+
+//get the tables schemas or structures
 public static function GetTableSchemas()
 {
   global $schemas;
@@ -99,13 +106,13 @@ return $schemas;
 
 }
 
+//get the database and tables structures
 public  function ExportDatabaseSQL()
 {
+  //global variable
  global $sql;
- 
  $database = self::GetDatabaseSchema(Salyut::$DB_NAME);
  $tables = self::GetTableSchemas();
-// $sql.=$database+$tables;
 foreach($tables as $var)
 {
  $sql.= $var;
@@ -113,6 +120,11 @@ foreach($tables as $var)
 }
 $usestatement = "USE ".Salyut::$DB_NAME;
 print($database.";<br>".$usestatement.";<br>".$sql);
+
+}
+//export tables data as INSERTS
+public function ExportTableData()
+{
 
 }
 
