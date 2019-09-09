@@ -24,6 +24,7 @@ public static $DB_NAME;
 
 function  __construct($host,$DB_USER,$DB_PASS,$DB_NAME)
 {
+  //set global variables
   Salyut::$DB_HOST = $host;
   Salyut::$DB_USER = $DB_USER;
   Salyut::$DB_PASS = $DB_PASS;
@@ -38,6 +39,7 @@ $conn = new mysqli(Salyut::$DB_HOST, Salyut::$DB_USER, Salyut::$DB_PASS, Salyut:
 // Check connection
 if ($conn->connect_error) 
 {
+  //if connection has failed
     die("Connection failed: " . $conn->connect_error);
 } 
 return $conn;
@@ -107,7 +109,7 @@ return $schemas;
 }
 
 //get the database and tables structures
-public  function ExportDatabaseSQL()
+public  function ExportDatabaseSQL($SaveFile,$file)
 {
   //global variable
  global $sql;
@@ -119,8 +121,26 @@ foreach($tables as $var)
 
 }
 $usestatement = "USE ".Salyut::$DB_NAME;
+$FINAL_STRUCTURE = $usestatement.";\n".$sql;
+//check if its save to textfile or not
+if($SaveFile)
+{
+  //save it to destinated file
+Salyut::WriteTextFile($FINAL_STRUCTURE,$file);
+}
+else
+{
+  //just print to screen
 print($database.";<br>".$usestatement.";<br>".$sql);
+}
+}
 
+//just a normal function for saving any file (Feel free to change)
+public static function WriteTextFile($content,$file)
+{
+$myfile = fopen($file, "w") or die("Unable to open file!");
+fwrite($myfile, $content);
+fclose($myfile);
 }
 //export tables data as INSERTS
 public function ExportTableData()
@@ -130,7 +150,8 @@ public function ExportTableData()
 
 
 }
-$salyut = new Salyut("localhost","root","","hotel");
+$salyut = new Salyut("localhost","root","","bunifu_go");
 $salyut->Connect();
-Salyut::ExportDatabaseSQL();
+Salyut::ExportDatabaseSQL(false,'Database.SQL');
+
 ?>
